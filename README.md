@@ -406,7 +406,7 @@ alembic upgrade head
 
 ## 👤 Author
 
-**Shokh Mufazzal**  
+**Mufazzalshokh**  
 [github.com/mufazzalshokh](https://github.com/mufazzalshokh)
 
 ---
