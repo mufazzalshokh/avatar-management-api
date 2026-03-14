@@ -1,64 +1,148 @@
-Chili Labs Backend Test Task
-A production-ready RESTful API with WebSocket support for real-time avatar updates, built with FastAPI and PostgreSQL.
+# Avatar Management API
 
-🚀 Features
-✅ User Authentication - Registration and login with JWT tokens 
-✅ OAuth2.0 Compliant - Access/Refresh token pair with token rotation
-✅ Avatar Upload - Image upload with validation and storage
-✅ Real-time Updates - WebSocket notifications for avatar changes
-✅ User Management - Complete user deletion with cleanup
-✅ JSend Response Format - Standardized API responses
-✅ Docker Support - One-command deployment with Docker Compose
-✅ Comprehensive Tests - Unit and integration tests with pytest
-✅ API Documentation - Interactive Swagger/OpenAPI docs
-📋 Requirements
-Option 1: Docker (Recommended)
-Docker
-Docker Compose
-Option 2: Local Development
-Python 3.11+
-PostgreSQL 15+
-🏃 Quick Start with Docker
-Run the entire application with one command:
+> A production-ready RESTful API with WebSocket support for real-time avatar updates.  
+> Built with **FastAPI** and **PostgreSQL** as a backend test task for **Chili Labs**.
 
-bash
+![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![pytest](https://img.shields.io/badge/Tests-pytest-brightgreen?logo=pytest&logoColor=white)
+
+---
+
+## Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Requirements](#-requirements)
+- [Quick Start (Docker)](#-quick-start-with-docker)
+- [Local Development Setup](#-local-development-setup)
+- [API Endpoints](#-api-endpoints)
+- [WebSocket](#-websocket)
+- [Testing](#-testing)
+- [Project Structure](#-project-structure)
+- [Security](#-security)
+- [Configuration](#-configuration)
+- [Production Notes](#-production-notes)
+
+---
+
+## ✅ Features
+
+| Feature | Description |
+|---|---|
+| **JWT Authentication** | Registration and login with access/refresh token pair |
+| **OAuth2.0 Compliant** | Token rotation — refresh tokens are invalidated on use |
+| **Avatar Upload** | Image upload with MIME type and file size validation |
+| **Real-time Updates** | WebSocket notifications pushed on avatar changes |
+| **User Management** | Full account deletion with cascading cleanup |
+| **JSend Responses** | Standardized `success` / `fail` / `error` envelope |
+| **Docker Support** | One-command deployment via Docker Compose |
+| **Comprehensive Tests** | Unit and integration tests with `pytest` + `httpx` |
+| **API Docs** | Auto-generated Swagger UI and ReDoc |
+
+---
+
+## 🛠 Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | FastAPI 0.109.0 |
+| Database | PostgreSQL 15 |
+| ORM | SQLAlchemy 2.0 (async) |
+| Auth | JWT via `python-jose` |
+| Password Hashing | `passlib` with bcrypt |
+| WebSockets | Native FastAPI WebSocket support |
+| Testing | `pytest` + `httpx` |
+| Containerization | Docker & Docker Compose |
+
+---
+
+## 📋 Requirements
+
+**Option 1 — Docker (Recommended)**
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+
+**Option 2 — Local Development**
+- Python 3.11+
+- PostgreSQL 15+
+
+---
+
+## 🚀 Quick Start with Docker
+
+Run the full application stack with a single command:
+
+```bash
 docker-compose up --build
-The API will be available at:
+```
 
-API: http://localhost:8000
-Documentation: http://localhost:8000/api/docs
-Alternative Docs: http://localhost:8000/api/redoc
-🛠️ Local Development Setup
-1. Clone the Repository
-bash
-git clone <repository-url>
+Once running, the following endpoints are available:
+
+| Service | URL |
+|---|---|
+| API Root | http://localhost:8000 |
+| Swagger UI | http://localhost:8000/api/docs |
+| ReDoc | http://localhost:8000/api/redoc |
+
+---
+
+## 🛠 Local Development Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/mufazzalshokh/backend-test-task.git
 cd backend-test-task
-2. Create Virtual Environment
-bash
+```
+
+### 2. Create a Virtual Environment
+
+```bash
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-3. Install Dependencies
-bash
+source venv/bin/activate        # macOS / Linux
+# venv\Scripts\activate       # Windows
+```
+
+### 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-4. Configure Environment
-bash
+```
+
+### 4. Configure Environment Variables
+
+```bash
 cp .env.example .env
-Edit .env and configure your database connection and secret key.
+```
 
-5. Start PostgreSQL
-Make sure PostgreSQL is running and create a database:
+Open `.env` and set your database connection string and secret key (see [Configuration](#-configuration)).
 
-sql
+### 5. Provision PostgreSQL
+
+```sql
 CREATE DATABASE chililabs_db;
 CREATE USER chililabs_user WITH PASSWORD 'chililabs_password';
 GRANT ALL PRIVILEGES ON DATABASE chililabs_db TO chililabs_user;
-6. Run the Application
-bash
+```
+
+### 6. Run the Application
+
+```bash
 uvicorn app.main:app --reload
-📚 API Endpoints
-Authentication
-Register
-http
+```
+
+---
+
+## 📚 API Endpoints
+
+### Authentication
+
+#### `POST /api/auth/register`
+
+```http
 POST /api/auth/register
 Content-Type: application/json
 
@@ -66,9 +150,12 @@ Content-Type: application/json
   "identifier": "user@example.com",
   "password": "securepassword123"
 }
-Response:
+```
 
-json
+<details>
+<summary>Response</summary>
+
+```json
 {
   "status": "success",
   "data": {
@@ -86,8 +173,14 @@ json
     }
   }
 }
-Login
-http
+```
+</details>
+
+---
+
+#### `POST /api/auth/login`
+
+```http
 POST /api/auth/login
 Content-Type: application/json
 
@@ -95,135 +188,178 @@ Content-Type: application/json
   "identifier": "user@example.com",
   "password": "securepassword123"
 }
-Refresh Token
-http
+```
+
+---
+
+#### `POST /api/auth/refresh`
+
+```http
 POST /api/auth/refresh
 Content-Type: application/json
 
 {
   "refresh_token": "eyJhbGc..."
 }
-Avatar Management
-Upload Avatar
-http
+```
+
+---
+
+### Avatar Management
+
+#### `POST /api/avatars/upload`
+
+```http
 POST /api/avatars/upload
 Authorization: Bearer {access_token}
 Content-Type: multipart/form-data
 
-file: [image file]
-Response:
+file: <image file>
+```
 
-json
+<details>
+<summary>Response</summary>
+
+```json
 {
   "status": "success",
   "data": {
     "avatar_url": "/uploads/avatars/abc123.jpg"
   }
 }
-User Management
-Get Current User
-http
+```
+</details>
+
+---
+
+### User Management
+
+#### `GET /api/users/me`
+
+```http
 GET /api/users/me
 Authorization: Bearer {access_token}
-Delete User
-http
+```
+
+---
+
+#### `DELETE /api/users/me`
+
+```http
 DELETE /api/users/me
 Authorization: Bearer {access_token}
-Response:
+```
 
-json
+<details>
+<summary>Response</summary>
+
+```json
 {
   "status": "success",
   "data": {
     "message": "User account successfully deleted"
   }
 }
-WebSocket Connection
-javascript
+```
+</details>
+
+---
+
+## 🔌 WebSocket
+
+Connect with a valid access token to receive real-time avatar update events:
+
+```javascript
 const ws = new WebSocket('ws://localhost:8000/ws?token=YOUR_ACCESS_TOKEN');
 
 ws.onmessage = (event) => {
   const data = JSON.parse(event.data);
-  console.log('Avatar updated:', data);
+  // Payload shape:
   // {
   //   "type": "avatar_updated",
   //   "user_id": 1,
   //   "avatar_url": "/uploads/avatars/new-avatar.jpg",
   //   "timestamp": "2025-11-03T12:00:00"
   // }
+  console.log('Avatar updated:', data);
 };
-🧪 Testing
-Run All Tests
-bash
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Run all tests
 pytest
-Run Unit Tests Only
-bash
+
+# Unit tests only
 pytest tests/unit/
-Run Integration Tests Only
-bash
+
+# Integration tests only
 pytest tests/integration/
-Run with Coverage
-bash
+
+# With HTML coverage report
 pytest --cov=app --cov-report=html
-🏗️ Project Structure
+```
+
+---
+
+## 🏗 Project Structure
+
+```
 backend-test-task/
 ├── app/
-│   ├── __init__.py
-│   ├── main.py              # FastAPI application
-│   ├── config.py            # Configuration settings
-│   ├── database.py          # Database connection
-│   ├── models.py            # SQLAlchemy models
-│   ├── schemas.py           # Pydantic schemas
+│   ├── main.py              # FastAPI application entry point
+│   ├── config.py            # Settings via pydantic-settings
+│   ├── database.py          # Async database connection
+│   ├── models.py            # SQLAlchemy ORM models
+│   ├── schemas.py           # Pydantic request/response schemas
 │   ├── auth/
-│   │   ├── jwt.py           # JWT token handling
-│   │   └── dependencies.py  # Auth dependencies
+│   │   ├── jwt.py           # JWT encoding / decoding
+│   │   └── dependencies.py  # FastAPI auth dependencies
 │   ├── routers/
-│   │   ├── auth.py          # Authentication routes
-│   │   ├── avatars.py       # Avatar upload routes
-│   │   └── users.py         # User management routes
+│   │   ├── auth.py          # /api/auth/* routes
+│   │   ├── avatars.py       # /api/avatars/* routes
+│   │   └── users.py         # /api/users/* routes
 │   ├── services/
-│   │   └── websocket.py     # WebSocket manager
+│   │   └── websocket.py     # WebSocket connection manager
 │   └── utils/
-│       ├── jsend.py         # JSend response formatter
-│       └── password.py      # Password utilities
+│       ├── jsend.py         # JSend response helpers
+│       └── password.py      # bcrypt helpers
 ├── tests/
-│   ├── conftest.py          # Test configuration
-│   ├── unit/                # Unit tests
-│   └── integration/         # Integration tests
-├── uploads/                 # Avatar storage
-├── docker-compose.yml       # Docker Compose config
-├── Dockerfile              # Docker image
-├── requirements.txt        # Python dependencies
-├── .env.example           # Environment template
-└── README.md              # This file
-🔐 Security Features
-Password Hashing: Bcrypt with salt
-JWT Tokens: Stateless authentication with expiration
-Token Rotation: Refresh tokens are rotated on use
-Token Revocation: Old tokens are invalidated on user deletion
-Input Validation: Pydantic schema validation
-File Validation: Image type and size validation
-SQL Injection Protection: SQLAlchemy ORM
-🎯 Technology Stack
-Framework: FastAPI 0.109.0
-Database: PostgreSQL 15
-ORM: SQLAlchemy 2.0
-Authentication: JWT with python-jose
-Password Hashing: Passlib with bcrypt
-WebSockets: Native FastAPI WebSocket support
-Testing: pytest with httpx
-Containerization: Docker & Docker Compose
-📖 API Documentation
-Once the application is running, visit:
+│   ├── conftest.py          # Shared fixtures
+│   ├── unit/
+│   └── integration/
+├── uploads/                 # Local avatar storage
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+├── .env.example
+└── README.md
+```
 
-Swagger UI: http://localhost:8000/api/docs
-ReDoc: http://localhost:8000/api/redoc
-Interactive documentation allows you to test all endpoints directly from your browser.
+---
 
-🔧 Configuration
-Key environment variables in .env:
+## 🔐 Security
 
-bash
+| Mechanism | Implementation |
+|---|---|
+| Password Storage | bcrypt with per-user salt |
+| Stateless Auth | JWT with configurable expiry |
+| Token Rotation | Refresh tokens invalidated on every use |
+| Token Revocation | All tokens invalidated on account deletion |
+| Input Validation | Pydantic schema validation on all endpoints |
+| File Validation | MIME type + file size enforcement on upload |
+| SQL Injection | Fully parameterised queries via SQLAlchemy ORM |
+
+---
+
+## ⚙️ Configuration
+
+Copy `.env.example` to `.env` and adjust the values below:
+
+```env
 # Database
 DATABASE_URL=postgresql://user:password@localhost:5432/dbname
 
@@ -233,47 +369,48 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 REFRESH_TOKEN_EXPIRE_DAYS=7
 
 # File Upload
-MAX_FILE_SIZE=5242880  # 5MB
+MAX_FILE_SIZE=5242880   # 5 MB
 UPLOAD_DIR=uploads/avatars
-🚢 Production Deployment
-Security Recommendations
-Change SECRET_KEY: Generate a secure random key
-bash
-   python -c "import secrets; print(secrets.token_urlsafe(32))"
-Use HTTPS: Configure SSL/TLS certificates
-Configure CORS: Restrict CORS_ORIGINS to your domains
-Database Security: Use strong passwords, restrict access
-File Storage: Consider using S3 or similar for production
-Environment Variables: Never commit .env to version control
-📝 Development Notes
-Adding New Endpoints
-Create route handler in app/routers/
-Add router to app/main.py
-Create tests in tests/integration/
-Database Migrations
-For schema changes, use Alembic:
+```
 
-bash
-# Create migration
-alembic revision --autogenerate -m "description"
+---
 
-# Apply migration
+## 🚢 Production Notes
+
+### Generate a Secure Secret Key
+
+```bash
+python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+### Checklist
+
+- [ ] Replace `SECRET_KEY` with a securely generated value
+- [ ] Enable HTTPS (configure SSL/TLS in your reverse proxy)
+- [ ] Restrict `CORS_ORIGINS` to your actual domain(s)
+- [ ] Use strong PostgreSQL credentials and restrict network access
+- [ ] Migrate avatar storage to S3-compatible object storage
+- [ ] Never commit `.env` to version control
+
+### Database Migrations (Alembic)
+
+```bash
+# Generate a new migration after model changes
+alembic revision --autogenerate -m "your description"
+
+# Apply pending migrations
 alembic upgrade head
-🤝 Contributing
-Fork the repository
-Create a feature branch
-Make your changes
-Add tests
-Submit a pull request
-📄 License
-This project is created as a test task for Chili Labs.
+```
 
-👤 Author
-Shokh
+---
 
-🙏 Acknowledgments
-Chili Labs for the test task opportunity
-FastAPI for the excellent framework
-The Python community
-Built with ❤️ for Chili Labs
+## 👤 Author
 
+**Shokh Mufazzal**  
+[github.com/mufazzalshokh](https://github.com/mufazzalshokh)
+
+---
+
+## 📄 License
+
+This project was created as a technical assessment for **Chili Labs**.
