@@ -1,7 +1,7 @@
 # Avatar Management API
 
 > A production-ready RESTful API with WebSocket support for real-time avatar updates.  
-> Built with **FastAPI** and **PostgreSQL** as a backend test task for **Chili Labs**.
+> Built with **FastAPI** and **PostgreSQL** a production-ready RESTful API with WebSocket support**.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-009688?logo=fastapi&logoColor=white)
