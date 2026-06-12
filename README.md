@@ -411,6 +411,3 @@ alembic upgrade head
 
 ---
 
-## 📄 License
-
-This project was created as a technical assessment for **Chili Labs**.
