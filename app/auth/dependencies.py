@@ -46,7 +46,8 @@ async def get_current_user(
         )
 
     # Get user ID from token
-    user_id: int = payload.get("sub")
+    user_id_raw = payload.get("sub")
+    user_id: int = int(user_id_raw) if user_id_raw is not None else None
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
