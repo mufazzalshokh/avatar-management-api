@@ -1,7 +1,7 @@
 # Avatar Management API
 
 > A production-ready RESTful API with WebSocket support for real-time avatar updates.  
-> Built with **FastAPI** and **PostgreSQL** a production-ready RESTful API with WebSocket support**.
+> Built with **FastAPI** and **PostgreSQL**.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-blue?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109.0-009688?logo=fastapi&logoColor=white)
@@ -50,7 +50,7 @@
 |---|---|
 | Framework | FastAPI 0.109.0 |
 | Database | PostgreSQL 15 |
-| ORM | SQLAlchemy 2.0 (async) |
+| ORM | SQLAlchemy 2.0 |
 | Auth | JWT via `python-jose` |
 | Password Hashing | `passlib` with bcrypt |
 | WebSockets | Native FastAPI WebSocket support |
@@ -410,4 +410,3 @@ alembic upgrade head
 [github.com/mufazzalshokh](https://github.com/mufazzalshokh)
 
 ---
-
