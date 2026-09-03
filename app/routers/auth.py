@@ -38,8 +38,8 @@ async def register(user_data: UserRegister, db: Session = Depends(get_db)):
     db.refresh(new_user)
 
     # Create tokens
-    access_token = create_access_token(data={"sub": new_user.id})
-    refresh_token = create_refresh_token(data={"sub": new_user.id})
+    access_token = create_access_token(data={"sub": str(new_user.id)})
+    refresh_token = create_refresh_token(data={"sub": str(new_user.id)})
 
     # Store refresh token in database
     refresh_token_obj = RefreshToken(
@@ -97,8 +97,8 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
         )
 
     # Create tokens
-    access_token = create_access_token(data={"sub": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.id})
+    access_token = create_access_token(data={"sub": str(user.id)})
+    refresh_token = create_refresh_token(data={"sub": str(user.id)})
 
     # Store refresh token
     refresh_token_obj = RefreshToken(
@@ -120,7 +120,11 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
     return JSendResponse.success(
         data={
-            "user": user_response.model_dump(),
+            # mode="json" converts datetime (and other non-JSON-native types)
+            # to JSON-safe values. Plain model_dump() left `created_at` as a
+            # raw datetime object, which json.dumps cannot serialize — every
+            # successful login was crashing with a 500 error before this fix.
+            "user": user_response.model_dump(mode="json"),
             "tokens": token_data.model_dump()
         }
     )
@@ -161,6 +165,9 @@ async def refresh_token(token_data: TokenRefresh, db: Session = Depends(get_db))
     user_id = payload.get("sub")
 
     # Create new tokens (token rotation)
+    # user_id is already a string here (it came straight from the decoded
+    # JWT "sub" claim), so it does not need str() wrapping like the other
+    # two call sites where a raw integer User.id is passed in.
     new_access_token = create_access_token(data={"sub": user_id})
     new_refresh_token = create_refresh_token(data={"sub": user_id})
 
